@@ -16,7 +16,7 @@ const HandleForm = (callback, validate) => {
       ...values,
       [name]: value
     });
-    validate(values)
+    setErrors(validate(values));
   };
 
   const handleSubmit = e => {
@@ -30,9 +30,10 @@ const HandleForm = (callback, validate) => {
     () => {
       if (Object.keys(errors).length === 0 && isSubmitting) {
         callback();
+        
       }
     },
-    [errors,isSubmitting,callback]
+    [errors, isSubmitting, callback, validate, values]
   );
 
   return { handleChange, handleSubmit, values, errors };
