@@ -1,21 +1,30 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import HandleForm from "./handleForm";
 import "./Register.scss";
 import validate from "./Validate";
 
 const Register = () => {
+  // eslint-disable-next-line no-unused-vars
   const [isSubmitted, setIsSubmitted] = useState(false);
-  
-  // function submitForm() {
-  //   setIsSubmitted(true);
-  // }
   const submitForm = useCallback(() => {
-    setIsSubmitted(true)
-  }, [setIsSubmitted])
+    setIsSubmitted(true);
+  }, [setIsSubmitted]);
+
   const { handleChange, handleSubmit, values, errors } = HandleForm(
     submitForm,
     validate
   );
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current === true) {
+      isFirstRender.current = false;
+    } else {
+      if (Object.keys(errors).length === 0) {
+        setIsSubmitted(true);
+      }
+    }
+  }, [errors]);
   return (
     <div className="login-background">
       <div className="login-container">
@@ -34,7 +43,9 @@ const Register = () => {
                 value={values.username}
                 onChange={handleChange}
               />
-              {errors.username && <p>{errors.username}</p>}
+              {errors.username && (
+                <p style={{ color: "red" }}>{errors.username}</p>
+              )}
             </div>
             <div className="col-12 form-group login-input">
               <label>Email</label>
@@ -46,20 +57,22 @@ const Register = () => {
                 value={values.email}
                 onChange={handleChange}
               />
-              {errors.email && <p>{errors.email}</p>}
+              {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
             </div>
             <div className="col-12 form-group login-input">
               <label>Password</label>
               <div className="custom-input-password">
                 <input
                   name="password"
-                  // type="password"
+                  type="password"
                   className="form-control"
                   placeholder="Enter your password"
                   onChange={handleChange}
                   value={values.password}
                 />
-                {errors.password && <p>{errors.password}</p>}
+                {errors.password && (
+                  <p style={{ color: "red" }}>{errors.password}</p>
+                )}
                 <span>
                   <i className="far fa-eye"></i>
                 </span>
@@ -70,13 +83,15 @@ const Register = () => {
               <div className="custom-input-password">
                 <input
                   name="confirmPassword"
-                  // type="password"
+                  type="password"
                   className="form-control"
                   placeholder="Confirm your password"
                   onChange={handleChange}
                   value={values.confirmPassword}
                 />
-                {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
+                {errors.confirmPassword && (
+                  <p style={{ color: "red" }}>{errors.confirmPassword}</p>
+                )}
                 <span>
                   <i className="far fa-eye"></i>
                 </span>
@@ -87,10 +102,18 @@ const Register = () => {
             </div>
             <div className="col-12">
               <button
-                className="btn-login"
-                // disabled={isSubmitted ? false : true}
+                className={
+                  isFirstRender.current || Object.keys(errors).length !== 0
+                    ? "btn-login-disable"
+                    : "btn-login"
+                }
+                disabled={
+                  isFirstRender.current || Object.keys(errors).length !== 0
+                    ? true
+                    : false
+                }
               >
-                Login
+                Rigister
               </button>
             </div>
           </form>
